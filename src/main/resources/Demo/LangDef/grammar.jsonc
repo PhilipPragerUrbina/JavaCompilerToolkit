@@ -1,0 +1,187 @@
+//Define your grammar here
+//Based off of LOX grammar: https://craftinginterpreters.com/appendix-i.html
+{
+  //Make sure to define start
+  "start" : "program",
+
+  "program": { //These keys are your AST nodes
+    "repeating": "declaration" //Like * in regex. Match as many ass possible.
+  },
+
+  "declaration": {
+    "options": ["classDecl", "funDecl", "varDecl", "statement"] //Like |. Match one of these.
+  },
+  "classDecl": {
+    "match": ["class", "identifier", "{", { "repeating": "function" }, "}"] //You can match tokens, or other grammars
+  },
+  "funDecl": {
+    "match": ["function_decl", "function"] //The data in the AST will be in the order of the matches
+  },
+  "varDecl": {
+    "match": [
+      "var",
+      "identifier",
+      {
+        "optional": { //Match or dont match
+          "match": ["equals", "expression"]
+        }
+      },
+      "end_statement"
+    ]
+  },
+  "statement": {
+    "options": [
+      "exprStmt",
+      "forStmt",
+      "ifStmt",
+      "printStmt",
+      "returnStmt",
+      "whileStmt",
+      "block"
+    ]
+  },
+  "exprStmt": {
+    "match": ["expression", "end_statement"] //Error will be thrown if unable to match
+  },
+  "forStmt": {
+    "match": [
+      "for",
+      "(",
+      { "options": ["varDecl", "exprStmt", "end_statement"] },
+      { "optional": "expression" },
+      "end_statement",
+      { "optional": "expression" },
+      ")",
+      "statement"
+    ]
+  },
+  "ifStmt": {
+    "match": [
+      "if",
+      "(",
+      "expression",
+      ")",
+      "statement",
+      { "optional": { "match": ["else", "statement"] } }
+    ]
+  },
+  "printStmt": {
+    "match": ["print", "expression", "end_statement"]
+  },
+  "returnStmt": {
+    "match": ["return", { "optional": "expression" }, "end_statement"]
+  },
+  "whileStmt": {
+    "match": ["while", "(", "expression", ")", "statement"]
+  },
+  "block": {
+    "match": ["{", { "repeating": "declaration" }, "}"]
+  },
+  "expression": {
+    "options": ["assignment"]
+  },
+  "assignment": {
+    "options": [
+      {
+        "match": [
+          { "optional": { "match": ["call", "."] } },
+          "identifier",
+          "equals",
+          "assignment"
+        ]
+      },
+      "logic_or"
+    ]
+  },
+  "logic_or": {
+    "match": ["logic_and", { "repeating": { "match": ["or", "logic_and"] } }]
+  },
+  "logic_and": {
+    "match": ["equality", { "repeating": { "match": ["and", "equality"] } }]
+  },
+  "equality": {
+    "match": [
+      "comparison",
+      {
+        "repeating": {
+          "match": [
+            { "options": ["equals_equals", "not_equals"] },
+            "comparison"
+          ]
+        }
+      }
+    ]
+  },
+  "comparison": {
+    "match": [
+      "term",
+      {
+        "repeating": {
+          "match": [
+            { "options": ["greater", "greater_equals", "less", "less_equals"] },
+            "term"
+          ]
+        }
+      }
+    ]
+  },
+  "term": {
+    "match": [
+      "factor",
+      {
+        "repeating": { "match": [{ "options": ["add", "subtract"] }, "factor"] }
+      }
+    ]
+  },
+  "factor": {
+    "match": [
+      "unary",
+      {
+        "repeating": {
+          "match": [{ "options": ["divide", "multiply"] }, "unary"]
+        }
+      }
+    ]
+  },
+  "unary": {
+    "options": [
+      { "match": [{ "options": ["not", "negate"] }, "unary"] },
+      "call"
+    ]
+  },
+  "call": {
+      "match":["primary", {"repeating":{
+        "options":[
+          {
+            "match":["(", {"optional": "arguments"}, ")"]
+          },
+          {
+            "match":[".", "identifier"]
+          }
+        ]
+      }}]
+  },
+  "primary": {
+    "options":["boolean", "null", "float", "integer", "this", "string", "identifier", {
+      "match":["(", "expression", ")"]
+    }]
+  },
+  "function":{
+    "match": ["identifier", "(", {"optional" : "parameters"}, ")", "block"]
+  }
+,
+"parameters": {
+  "match":["identifier", {
+    "repeating": {
+      "match":[",", "identifier"]
+    }
+  }]
+},
+"arguments": {
+  "match":["expression", {
+    "repeating": {
+      "match":[",", "expression"]
+    }
+  }]
+}
+}

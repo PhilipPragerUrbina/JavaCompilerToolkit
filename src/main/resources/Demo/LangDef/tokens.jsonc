@@ -1,0 +1,127 @@
+//The json key is the identifier, to use in your grammar
+//Higher priority(lower number) is taken when there are multiple matches.
+//Enter your token matching regex as pattern
+//First capture group is considered the value
+//Also specify if this data is needed in the AST with keep. For example you need to keep plus and minus to know what operation to perform. You also need to keep literals. But you dont need "while" since it is given by the AST node type, and you dont need "{" since things will already be grouped.
+{
+
+  //literals
+  "String": { //String has highest priority to avoid matching inside of string
+      "pattern" : "\"(.+)\"",
+      "priority" : 0,
+      "keep" : true
+  },
+  "float": {
+    "pattern" : "(\\d+.\\d+)",
+    "priority" : 1,
+    "keep" : true
+  },
+  "boolean": {
+    "pattern" : "(true|false)",
+    "priority" : 1,
+    "keep" : true
+  },
+  "integer": {
+    "pattern" : "(\\d+)[^\\.\\d]{1}",
+    "priority" : 2,
+    "keep" : true
+  },
+  "null": {
+    "pattern" : "(null)",
+    "priority" : 1,
+    "keep" : true
+  },
+  //Keywords
+  "function_decl": {
+    "pattern" : "(func)",
+    "priority" : 1,
+    "keep" : false
+  },
+  "class": {
+    "pattern" : "(class)",
+    "priority" : 1,
+    "keep" : false
+  },
+  "var": {
+    "pattern" : "(var|bool|int|float|string)",
+    "priority" : 1,
+    "keep" : true
+  },
+  "return": {
+    "pattern" : "(return)",
+    "priority" : 1,
+    "keep" : false
+  },
+  "if": {
+    "pattern" : "(if)",
+    "priority" : 1,
+    "keep" : false
+  },
+  "else": {
+    "pattern" : "(else)",
+    "priority" : 1,
+    "keep" : false
+  },
+  "while": {
+    "pattern" : "(while)",
+    "priority" : 1,
+    "keep" : false
+  },
+  //control flow
+  "{": {
+    "pattern" : "(\\{)",
+    "priority" : 1,
+    "keep" : false
+  },
+  "}": {
+    "pattern" : "(\\})",
+    "priority" : 1,
+    "keep" : false
+  },
+  "(": {
+    "pattern" : "(\\()",
+    "priority" : 1,
+    "keep" : false
+  },
+  ")": {
+    "pattern" : "(\\))",
+    "priority" : 1,
+    "keep" : false
+  },
+  "end_statement": {
+    "pattern" : "(\\;)",
+    "priority" : 1,
+    "keep" : false
+  },
+  ".": {
+    "pattern" : "(\\.)",
+    "priority" : 1,
+    "keep" : false
+  },
+  //Double operators
+  "equals_equals": {
+    "pattern" : "(\\=\\=)",
+    "priority" : 1,
+    "keep" : true
+  },
+  "or": {
+    "pattern" : "(\\|\\|)",
+    "priority" : 1,
+    "keep" : true
+  },
+  "and": {
+    "pattern" : "(\\&\\&)",
+    "priority" : 1,
+    "keep" : true
+  },
+  //Single operators(lower priority than double operators)
+  "equals": {
+    "pattern" : "(\\=)",
+    "priority" : 2
+  },
+  //Identifier is lowest priority
+  "identifier": {
+    "pattern" : "(\\S+)",
+    "priority" : 3
+  }
+}
