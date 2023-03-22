@@ -4,7 +4,4 @@
   "name": "lox-lite",
   "version": "0.0.0.0.0.1",
   "description" : "Funky test language based on LOX",
-  //Definition files
-  "grammar": "/grammar.jsonc",
-  "tokens" : "/tokens.jsonc"
 }
