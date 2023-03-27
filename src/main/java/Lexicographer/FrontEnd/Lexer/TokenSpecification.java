@@ -1,4 +1,4 @@
-package Lexicographer.FrontEnd;
+package Lexicographer.FrontEnd.Lexer;
 
 /**
  * Represents how to lex a token
@@ -6,21 +6,21 @@ package Lexicographer.FrontEnd;
 public class TokenSpecification {
     private final String regex_pattern;
     private final int priority;
-    private final boolean keep_value;
     private final String name;
+    private final boolean discard;
 
     /**
      * Create a token specification that describes how to find a token
      * @param regex_pattern Pattern to use
      * @param priority Lower is higher priority
-     * @param keep_value Whether or not to keep the raw value of the token(first capture group) in the AST
-     * @param name Name of token
+     * @param discard To not include in final token list
+     * @param name Name or type of token
      */
-    public TokenSpecification(String regex_pattern, int priority, boolean keep_value, String name) {
+    public TokenSpecification(String regex_pattern, int priority, boolean discard, String name) {
         this.regex_pattern = regex_pattern;
         this.priority = priority;
-        this.keep_value = keep_value;
         this.name = name;
+        this.discard = discard;
     }
 
     public String getRegexPattern() {
@@ -31,8 +31,8 @@ public class TokenSpecification {
         return priority;
     }
 
-    public boolean isKeepValue() {
-        return keep_value;
+    public boolean getDiscard(){
+        return discard;
     }
 
     public String getName(){
@@ -44,8 +44,8 @@ public class TokenSpecification {
         return "TokenSpecification{" +
                 "regex_pattern='" + regex_pattern + '\'' +
                 ", priority=" + priority +
-                ", keep_value=" + keep_value +
                 ", name='" + name + '\'' +
+                ", discard=" + discard +
                 '}';
     }
 }

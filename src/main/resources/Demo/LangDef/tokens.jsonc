@@ -1,129 +1,149 @@
 //The json key is the identifier, to use in your grammar
 //Higher priority(lower number) is taken when there are multiple matches.
 //Enter your token matching regex as pattern
-//First capture group is considered the value
-//Also specify if this data is needed in the AST with keep. For example you need to keep plus and minus to know what operation to perform. You also need to keep literals. But you dont need "while" since it is given by the AST node type, and you dont need "{" since things will already be grouped.
+//First capture group is considered the value. If this data is not needed, then dont put in a capture group.
+//For example you need to keep plus and minus to know what operation to perform. You also need to keep literals. But you dont need "while" since it is given by the AST node type, and you dont need "{" since things will already be grouped.
+//Anything that does not get picked up by a lexer pattern is ignored
+//To explicitly ignore things, add the discard true flag to get rid of such patterns. For example, comments.
 {
 
   //literals
-  "String": { //String has highest priority to avoid matching inside of string
-      "pattern" : "\"(.+)\"",
-      "priority" : 0,
-      "keep" : true
+  "comment": { //Comments have even higher priority
+        "pattern" : "\\/\\/.*\\n",
+        "priority" : -1,
+        "discard" : true
+    },
+  "string": { //String has highest priority to avoid matching inside of string
+      "pattern" : "\\\"([^\\\"]+)\\\"",
+      "priority" : 0
   },
   "float": {
-    "pattern" : "(\\d+.\\d+)",
-    "priority" : 1,
-    "keep" : true
+    "pattern" : "(\\d+\\.\\d+)",
+    "priority" : 1
   },
   "boolean": {
-    "pattern" : "(true|false)",
-    "priority" : 1,
-    "keep" : true
+    "pattern" : "(?<!\\w)(true|false)(?!\\w)",
+    "priority" : 1
   },
   "integer": {
     "pattern" : "(\\d+)[^\\.\\d]{1}",
-    "priority" : 2,
-    "keep" : true
+    "priority" : 2
   },
   "null": {
-    "pattern" : "(null)",
-    "priority" : 1,
-    "keep" : true
+    "pattern" : "(?<!\\w)(null)(?!\\w)",
+    "priority" : 1
   },
   //Keywords
   "function_decl": {
-    "pattern" : "(func)",
-    "priority" : 1,
-    "keep" : false
+    "pattern" : "(?<!\\w)func(?!\\w)",
+    "priority" : 1
   },
   "class": {
-    "pattern" : "(class)",
-    "priority" : 1,
-    "keep" : false
+    "pattern" : "(?<!\\w)class(?!\\w)",
+    "priority" : 1
   },
   "var": {
-    "pattern" : "(var|bool|int|float|string)",
-    "priority" : 1,
-    "keep" : true
+    "pattern" : "(?<!\\w)(var|bool|int|float|string)(?!\\w)", //notice the negative lookahead and the negative lookbehind making sure it does not mix with identifier. print is print, not "pr""int"
+    "priority" : 1
   },
   "return": {
-    "pattern" : "(return)",
-    "priority" : 1,
-    "keep" : false
+    "pattern" : "(?<!\\w)return(?!\\w)",
+    "priority" : 1
   },
   "if": {
-    "pattern" : "(if)",
-    "priority" : 1,
-    "keep" : false
+    "pattern" : "(?<!\\w)if(?!\\w)",
+    "priority" : 1
   },
   "else": {
-    "pattern" : "(else)",
-    "priority" : 1,
-    "keep" : false
+    "pattern" : "(?<!\\w)else(?!\\w)",
+    "priority" : 1
   },
   "while": {
-    "pattern" : "(while)",
-    "priority" : 1,
-    "keep" : false
+    "pattern" : "(?<!\\w)while(?!\\w)",
+    "priority" : 1
   },
   //control flow
   "{": {
-    "pattern" : "(\\{)",
-    "priority" : 1,
-    "keep" : false
+    "pattern" : "\\{",
+    "priority" : 1
   },
   "}": {
-    "pattern" : "(\\})",
-    "priority" : 1,
-    "keep" : false
+    "pattern" : "\\}",
+    "priority" : 1
   },
   "(": {
-    "pattern" : "(\\()",
-    "priority" : 1,
-    "keep" : false
+    "pattern" : "\\(",
+    "priority" : 1
   },
   ")": {
-    "pattern" : "(\\))",
-    "priority" : 1,
-    "keep" : false
+    "pattern" : "\\)",
+    "priority" : 1
   },
   "end_statement": {
-    "pattern" : "(\\;)",
-    "priority" : 1,
-    "keep" : false
+    "pattern" : "\\;",
+    "priority" : 1
   },
   ".": {
-    "pattern" : "(\\.)",
-    "priority" : 1,
-    "keep" : false
+    "pattern" : "\\.",
+    "priority" : 2
   },
   //Double operators
   "equals_equals": {
-    "pattern" : "(\\=\\=)",
-    "priority" : 1,
-    "keep" : true
+    "pattern" : "\\=\\=",
+    "priority" : 1
   },
+  "less_equals": {
+      "pattern" : "\\<\\=",
+      "priority" : 1
+  },
+  "greater_equals": {
+      "pattern" : "\\>\\=",
+      "priority" : 1
+ },
   "or": {
-    "pattern" : "(\\|\\|)",
-    "priority" : 1,
-    "keep" : true
+    "pattern" : "\\|\\|",
+    "priority" : 1
   },
   "and": {
-    "pattern" : "(\\&\\&)",
-    "priority" : 1,
-    "keep" : true
+    "pattern" : "\\&\\&",
+    "priority" : 1
   },
   //Single operators(lower priority than double operators)
+ "less": {
+     "pattern" : "\\<",
+     "priority" : 2
+  },
+  "greater": {
+     "pattern" : "\\>",
+     "priority" : 2
+  },
   "equals": {
-    "pattern" : "(\\=)",
-    "priority" : 2,
-    "keep" : false
+    "pattern" : "\\=",
+    "priority" : 2
+  },
+  "plus": {
+     "pattern" : "\\+",
+     "priority" : 2
+  },
+  "minus": {
+     "pattern" : "\\-",
+     "priority" : 2
+  },
+  "star": {
+     "pattern" : "\\*",
+     "priority" : 2
+  },
+  "slash": {
+     "pattern" : "\\/",
+     "priority" : 2
+  },
+  "not": {
+     "pattern" : "\\!",
+      "priority" : 2
   },
   //Identifier is lowest priority
   "identifier": {
-    "pattern" : "(\\S+)",
+    "pattern" : "(\\w+)",
     "priority" : 3,
-    "keep" : false
   }
 }

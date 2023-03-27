@@ -1,6 +1,7 @@
 package Lexicographer.FrontEnd;
 
 
+import Lexicographer.FrontEnd.Lexer.TokenSpecification;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -9,10 +10,7 @@ import org.json.JSONTokener;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -85,22 +83,30 @@ public class LanguageDefinition {
         for (Object key : lexer_tokens.keySet()){
             String name = (String) key;
             JSONObject contents = (JSONObject) lexer_tokens.get(name);
-
             try {
+
                 String pattern = (String) contents.get("pattern");
                 Integer priority = (Integer) contents.get("priority");
-                Boolean keep = (Boolean) contents.get("keep");
+
+                Boolean discard;
+                try {
+                     discard = (Boolean)contents.get("discard");
+                } catch (JSONException e){
+                    discard = false; //Not found, default to false
+                }
 
                 //Validate pattern syntax by compiling it.
                 Pattern validate_pattern = Pattern.compile(pattern);
+                if(validate_pattern.matcher("").groupCount() > 1){
+                    throw new IOException("Token spec: " + name + " has too many capture groups. Max of one is allowed.");
+                }
 
-                token_specification_array.add(new TokenSpecification(pattern,priority,keep,name));
+                token_specification_array.add(new TokenSpecification(pattern,priority,discard,name));
 
             } catch (JSONException exception){
                 throw new IOException("Token spec: " + name + " is missing a field. ");
             }
         }
-
         return token_specification_array;
     }
 
