@@ -1,3 +1,4 @@
+import Lexicographer.FrontEnd.Generators.JavaGenerator;
 import Lexicographer.FrontEnd.LanguageDefinition;
 import Lexicographer.FrontEnd.Lexer.LexerGenerator;
 import Lexicographer.FrontEnd.Lexer.Token;
@@ -59,5 +60,15 @@ public class main {
                 System.out.println(token.getContents() + ":" + token.getType() + " ");
             }
         }
+
+
+        JavaGenerator generator1 = new JavaGenerator("foo", "bar.bar");
+        generator1.openClass("WHee", "par", "foo", "bar");
+        generator1.createVariable("int","bar","2",true,false);
+        generator1.openMethod("math", "int",true,"int g");
+        generator1.addLine("print(foo);");
+        generator1.closeMethod();
+        generator1.closeClass();
+        System.out.println(generator1.getCode());
     }
 }
