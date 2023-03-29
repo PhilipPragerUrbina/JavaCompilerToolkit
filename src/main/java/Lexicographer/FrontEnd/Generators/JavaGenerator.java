@@ -1,7 +1,7 @@
 package Lexicographer.FrontEnd.Generators;
 
 /**
- * Defines how different constructs are created in the target language of java
+ * Helps format simple generated java code and makes the generation more readable
  */
 public class JavaGenerator {
     private final StringBuilder java_code = new StringBuilder();
@@ -21,20 +21,26 @@ public class JavaGenerator {
     }
 
     /**
-     * Start a java class
+     * Remove the last char from the code generated so far
+     * Useful for removing the last comma in a list
+     */
+    private void removeLastChar(){
+        java_code.deleteCharAt(java_code.length()-1);
+    }
+
+    /**
+     * Start a public java class
      * @param name Name of class
      * @param parent Parent class or null
      * @param implementing Any interfaces the class should implement or null
      */
     public void openClass(String name,String parent, String... implementing){
-
-
-        add("class " + name);
+        add("public class " + name);
         if(parent != null){
             add(" extends " + parent);
         }
         if(implementing != null){
-            add(" implementing ");
+            add(" implements ");
             for (String interface_name: implementing) {
                 add(interface_name + ",");
             }
@@ -45,43 +51,19 @@ public class JavaGenerator {
     }
 
     /**
-     * End a java class
+     * End a java class. Same as closeBlock but for better readability
      */
     public void closeClass(){
-        depth--;
-        addLine("}");
-    }
-
-    /**
-     * Create a variable
-     * @param type Type name
-     * @param name Variable name
-     * @param default_value The default value or null
-     * @param is_final If the variable is considered final
-     * @param is_public Is it a public variable
-     */
-    public void createVariable(String type, String name, String default_value, boolean is_final, boolean is_public){
-        addLine((is_public ? "public " : "private ")+(is_final ? "final " : "")+ type + " " + name + (default_value != null ? " = " + default_value : "") + ";");
-    }
-
-    /**
-     * Create a local variable
-     * @param type Type name
-     * @param name Variable name
-     * @param default_value The default value or null
-     */
-    public void createVariable(String type, String name, String default_value){
-        addLine(type + " " + name + (default_value != null ? " = " + default_value : "") + ";");
+        closeBlock();
     }
 
     /**
      * Start an initialized array variable
-     * @param type Array type(without brackets)
+     * @param type Array type(without brackets). You can also specify final and private/public
      * @param name Name of array
-     * @param is_final If the array is final
      */
-    public void openList(String type, String name, boolean is_final){
-        add((is_final ? "final " : "")+ type + "[] " + name + " = {");
+    public void openList(String type, String name){
+        add(type + "[] " + name + " = {");
     }
 
     /**
@@ -105,7 +87,7 @@ public class JavaGenerator {
      * @param str What should be inside the string
      * @return String literal to put in generated code
      */
-    public static String formatString(String str){
+    public static String getStringLiteral(String str){
         return "\"" + str + "\"";
     }
 
@@ -129,8 +111,6 @@ public class JavaGenerator {
      * @param is_public Is the method public
      */
     public void openMethod(String name, String return_type,  boolean is_public,String... parameters){
-
-
         add((is_public ? "public " : "private ") + return_type + " " + name + "(");
         for (String parameter: parameters) {
             add(parameter + ",");
@@ -142,20 +122,28 @@ public class JavaGenerator {
     }
 
     /**
-     * End a java method
+     * End a java method. Same as closeBlock but for better readability
      */
     public void closeMethod(){
-        depth--;
-        addLine("}");
+        closeBlock();
     }
 
+    /**
+     * Open a block
+     * @param type if, while, for
+     * @param contents Conditional statements or for loop statements.
+     */
+    public void openBlock(String type, String contents){
+        addLine(type + "(" + contents + "){");
+        depth++;
+    }
 
     /**
-     * Remove the last char from the code generated so far
-     * Useful for removing the last comma in a list
+     * Close a block
      */
-    private void removeLastChar(){
-        java_code.deleteCharAt(java_code.length()-1);
+    public void closeBlock(){
+        depth--;
+        addLine("}");
     }
 
     /**
@@ -167,6 +155,14 @@ public class JavaGenerator {
         in_line = false;
         java_code.append(text).append('\n');
 
+    }
+
+    /**
+     * Add a line comment
+     * @param comment Line comment contents
+     */
+    public void comment(String comment){
+        addLine("//" + comment);
     }
 
     /**

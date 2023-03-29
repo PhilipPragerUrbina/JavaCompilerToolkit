@@ -1,7 +1,7 @@
-//Define your langauge metadata here
+//Define your language metadata here
 {
   //Description
-  "name": "lox-lite",
+  "name": "Demo",
   "version": "0.0.0.0.0.1",
   "description" : "Funky test language based on LOX",
 }

@@ -1,11 +1,17 @@
-import Lexicographer.FrontEnd.Generators.JavaGenerator;
+import Demo.Generated.DemoLexer;
+
 import Lexicographer.FrontEnd.LanguageDefinition;
+import Lexicographer.FrontEnd.Lexer.Lexer;
 import Lexicographer.FrontEnd.Lexer.LexerGenerator;
 import Lexicographer.FrontEnd.Lexer.Token;
-import Lexicographer.FrontEnd.Lexer.TokenBoilerPlate;
+import Lexicographer.IO.InFile;
+import Lexicographer.IO.OutFile;
+
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class main {
 
@@ -17,43 +23,19 @@ public class main {
         System.out.println(langdef.getLanguageVersion());
         System.out.println(langdef.getTokenSpecifications());
 
-        LexerGenerator generator = new LexerGenerator(langdef.getTokenSpecifications());
+        LexerGenerator generator = new LexerGenerator(langdef.getTokenSpecifications(),langdef.getLanguageName(),"Demo.Generated");
         System.out.println("Code: \n\n");
-        System.out.println(generator.getResult());
+        System.out.println(generator.getCode());
         System.out.println("\n\n");
-        TokenBoilerPlate boilerPlate = new TokenBoilerPlate("class Zoo {\n" +
-                "  init() {\n" +
-                "    this.aardvark = 1;\n" +
-                "    this.baboon   = 1;\n" +
-                "    this.cat      = 1;\n" +
-                "    this.donkey   = 1;\n" +
-                "    this.elephant = 1;\n" +
-                "    this.fox      = 1;\n" +
-                "  }\n" +
-                "  ant()    { return this.aardvark; }\n" +
-                "  banana() { return this.baboon; }\n" +
-                "  tuna()   { return this.cat; }\n" +
-                "  hay()    { return this.donkey; }\n" +
-                "  grass()  { return this.elephant; }\n" +
-                "  mouse()  { return this.fox; }\n" +
-                "}\n" +
-                "\n" +
-                "var zoo = Zoo();\n" +
-                "var sum = 0;\n" +
-                "var start = clock();\n" +
-                "while (sum < 100000000) {\n" +
-                "  sum = sum + zoo.ant()\n" +
-                "            + zoo.banana()\n" +
-                "            + zoo.tuna()\n" +
-                "            + zoo.hay()\n" +
-                "            + zoo.grass()\n" +
-                "            + zoo.mouse();\n" +
-                "}\n" +
-                "\n" +
-                "print clock() - start;\n" +
-                "print sum;");
-        System.out.println(boilerPlate.getTokens());
-        for (Token token: boilerPlate.getTokens()) {
+
+        OutFile file = new OutFile("C:/Users/Philip/IdeaProjects/Lexicographer/src/main/java/Demo/Generated/DemoLexer.java", false);
+        file.writeText(generator.getCode());
+
+        Lexer boilerPlate = new DemoLexer();
+
+        String in_file = new InFile("Demo/TestFiles/test.lox").readText();
+        ArrayList<Token> tokens = boilerPlate.tokenize(in_file);
+        for (Token token: tokens) {
             if(token.getContents() == null){
                 System.out.println(token.getType());
             }else{
@@ -61,14 +43,19 @@ public class main {
             }
         }
 
+        int count = 0;
+        for (int i = 0; i < in_file.length(); i++) {
+            if(count < tokens.size() && i == tokens.get(count).getLocation()){
+                Random random = new Random(tokens.get(count).getType().hashCode());
+                System.out.print("\u001B[0m");
+                System.out.print("\u001B[" + (random.nextInt(7)+31) +"m");
+                count++;
+            }
+            System.out.print(in_file.charAt(i));
+        }
 
-        JavaGenerator generator1 = new JavaGenerator("foo", "bar.bar");
-        generator1.openClass("WHee", "par", "foo", "bar");
-        generator1.createVariable("int","bar","2",true,false);
-        generator1.openMethod("math", "int",true,"int g");
-        generator1.addLine("print(foo);");
-        generator1.closeMethod();
-        generator1.closeClass();
-        System.out.println(generator1.getCode());
+
+
+
     }
 }

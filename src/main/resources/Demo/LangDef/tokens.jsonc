@@ -18,7 +18,7 @@
       "priority" : 0
   },
   "float": {
-    "pattern" : "(\\d+\\.\\d+)",
+    "pattern" : "(?<!\\w)(\\d+\\.\\d+)(?!\\w)",
     "priority" : 1
   },
   "boolean": {
@@ -26,7 +26,7 @@
     "priority" : 1
   },
   "integer": {
-    "pattern" : "(\\d+)[^\\.\\d]{1}",
+    "pattern" : "(?<!\\w)(\\d+)[^\\.\\d]{1}(?!\\w)",
     "priority" : 2
   },
   "null": {
@@ -35,7 +35,7 @@
   },
   //Keywords
   "function_decl": {
-    "pattern" : "(?<!\\w)func(?!\\w)",
+    "pattern" : "(?<!\\w)fun(?!\\w)",
     "priority" : 1
   },
   "class": {
