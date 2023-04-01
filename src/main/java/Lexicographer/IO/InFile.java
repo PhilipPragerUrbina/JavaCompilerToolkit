@@ -22,6 +22,18 @@ public class InFile {
     }
 
     /**
+     * Create file to read from
+     * @param file Java file object
+     * @throws IOException File not found or can not be read
+     */
+    public InFile(File file) throws IOException {
+        this.file = file;
+        if(!file.exists()){
+            throw new IOException("File " + file.getName() + " does not exist.");
+        } else if(!file.canRead()) throw new IOException("File " + file.getName() + " can not be read.");
+    }
+
+    /**
      * Get file extension of file
      * @return File extension(without .) or null if not found
      */

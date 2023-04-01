@@ -15,7 +15,7 @@ public class DemoLexer implements Lexer {
 			String type = types[i];
 			//Find, add, and remove
 			file = matcher.replaceAll(match_result -> {
-			if(type != null) { tokens.add(new Token(type, match_result.groupCount() == 1 ?   match_result.group(1) : null, matcher.start(), 0)); }
+			if(type != null) { tokens.add(new Token(type, match_result.groupCount() == 1 ?   match_result.group(1) : null, matcher.start())); }
 			return String.valueOf("\00".repeat(Math.max(0, matcher.end() - matcher.start()))); //fill string of same size with NUL to keep position.
 			});
 		}

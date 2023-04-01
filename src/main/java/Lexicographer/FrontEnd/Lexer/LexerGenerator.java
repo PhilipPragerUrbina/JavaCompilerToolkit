@@ -1,6 +1,6 @@
 package Lexicographer.FrontEnd.Lexer;
 
-import Lexicographer.FrontEnd.Generators.JavaGenerator;
+import Lexicographer.FrontEnd.JavaGenerator;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,6 +18,8 @@ public class LexerGenerator extends JavaGenerator {
      */
     public LexerGenerator(ArrayList<TokenSpecification> specifications, String language_name, String package_name){
         super( package_name,  "java.util.ArrayList", "java.util.Comparator","java.util.regex.Matcher","java.util.regex.Pattern", "Lexicographer.FrontEnd.Lexer.*"); //Import libraries
+
+        if(specifications.isEmpty()) return;
 
         specifications.sort(Comparator.comparingInt(TokenSpecification::getPriority)); //Sort by priority
 
@@ -44,7 +46,7 @@ public class LexerGenerator extends JavaGenerator {
                     addLine("String type = types[i];");
                     comment("Find, add, and remove");
                     addLine("file = matcher.replaceAll(match_result -> {"); //Find tokens
-                    addLine("if(type != null) { tokens.add(new Token(type, match_result.groupCount() == 1 ?   match_result.group(1) : null, matcher.start(), 0)); }"); //Add to list if not discarded
+                    addLine("if(type != null) { tokens.add(new Token(type, match_result.groupCount() == 1 ?   match_result.group(1) : null, matcher.start())); }"); //Add to list if not discarded
                     addLine("return String.valueOf(\"\\00\".repeat(Math.max(0, matcher.end() - matcher.start()))); //fill string of same size with NUL to keep position."); //Replace in string with empty characters
                     addLine("});");
                closeBlock();

@@ -1,5 +1,7 @@
 package Lexicographer.FrontEnd.Lexer;
 
+import java.util.Objects;
+
 /**
  * A Lexer token
  * Immutable
@@ -9,20 +11,17 @@ public class Token {
     private final String type;
     private final String contents;
     private final int location;
-    private final int line;
 
     /**
      * Create a lexer token
      * @param type Name of token type
      * @param contents Additional captured information(optional, can be null)
      * @param location Char position in file where it was found
-     * @param line For debug purposes
      */
-    public Token(String type, String contents, int location, int line) {
+    public Token(String type, String contents, int location) {
         this.type = type;
         this.contents = contents;
         this.location = location;
-        this.line = line;
     }
 
     /**
@@ -46,11 +45,12 @@ public class Token {
         return contents;
     }
 
-    /**
-     * Get line number where token was found
-     */
-    public int getLine(){
-        return line;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Token token = (Token) o;
+        return location == token.location && Objects.equals(type, token.type) && Objects.equals(contents, token.contents);
     }
 
     @Override
@@ -59,7 +59,6 @@ public class Token {
                 "type='" + type + '\'' +
                 ", contents='" + contents + '\'' +
                 ", location=" + location +
-                ", line=" + line +
                 '}';
     }
 }

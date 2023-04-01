@@ -14,6 +14,4 @@ public interface Lexer {
      */
     ArrayList<Token> tokenize(String file);
 
-    //todo for testing: https://stackoverflow.com/questions/2946338/how-do-i-programmatically-compile-and-instantiate-a-java-class
-
 }

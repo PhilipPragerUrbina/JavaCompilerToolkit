@@ -1,4 +1,4 @@
-package Lexicographer.FrontEnd.Generators;
+package Lexicographer.FrontEnd;
 
 /**
  * Helps format simple generated java code and makes the generation more readable

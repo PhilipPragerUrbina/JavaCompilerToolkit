@@ -28,6 +28,22 @@ public class OutFile {
     }
 
     /**
+     * Write to a file
+     * @param file Java file object
+     * Will create file if it does not exist
+     * @throws IOException File not found or can not be written to
+     */
+    public OutFile(File file) throws IOException {
+        this.file = file;
+        if(!file.exists()){
+            boolean ignored = file.createNewFile();
+        }else if(!file.exists()){
+            throw new IOException("File " + file.getName() + " does not exist.");
+        }
+        if(!file.canWrite()) throw new IOException("File " + file.getName() + " can not be written to.");
+    }
+
+    /**
      * Write text to a file
      * @param text Text to write
      * @throws IOException Problem writing text
