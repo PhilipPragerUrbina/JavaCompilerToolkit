@@ -21,6 +21,12 @@ public class JavaGenerator {
     }
 
     /**
+     * Generate java code from scratch
+     * For partial java code
+     */
+    public JavaGenerator(){}
+
+    /**
      * Remove the last char from the code generated so far
      * Useful for removing the last comma in a list
      */

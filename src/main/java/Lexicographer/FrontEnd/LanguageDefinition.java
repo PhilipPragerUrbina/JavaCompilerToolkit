@@ -41,6 +41,13 @@ public class LanguageDefinition {
     }
 
     /**
+     * Get the json grammar tree
+     */
+    public JSONObject getParserGrammar(){
+        return parser_grammar;
+    }
+
+    /**
      * Get the language name or null if not specified
      */
     public String getLanguageName(){

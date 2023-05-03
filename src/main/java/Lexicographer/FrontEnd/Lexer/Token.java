@@ -53,6 +53,15 @@ public class Token {
         return location == token.location && Objects.equals(type, token.type) && Objects.equals(contents, token.contents);
     }
 
+    /**
+     * Check if token is the same type as the target type
+     * @param target_type Type id
+     * @return True if same
+     */
+    public boolean isType(String target_type){
+        return type.equals(target_type);
+    }
+
     @Override
     public String toString() {
         return "Token{" +

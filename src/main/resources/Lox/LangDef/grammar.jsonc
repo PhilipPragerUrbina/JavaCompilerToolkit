@@ -5,7 +5,7 @@
   "start" : "program",
 
   "program": { //These keys are your AST nodes
-    "repeating": "declaration" //Like * in regex. Match as many ass possible.
+    "repeating": "declaration" //Like * in regex. Match as many as possible.
   },
 
   "declaration": {
@@ -162,8 +162,17 @@
       }}]
   },
   "primary": {
-    "options":["boolean", "null", "float", "integer", "this", "string", "identifier", {
-      "match":["(", "expression", ")"]
+  //The save flag creates nodes(eg: Literal). These represent the AST nodes. The name will be the name of the AST nodes class once generated, and stuff matched within it will be added as members,
+    "options":[{ "match" : "boolean", "save" : "Literal"  },
+     {"match" : "null",   "save" : "Literal"},
+     {"match" : "float",  "save" : "Literal"},
+     {"match" :"integer", "save" : "Literal"},
+     {"match" : "this",   "save" : "This"},
+     {"match" : "string", "save" : "Literal"},
+     {"match" :"identifier","save" : "Variable"},
+     { "save" : "Grouping",
+      "match":["(", "expression", ")"],
+        //Later you will be able to specify exactly which matches you want to keep as data in the AST and what the member names  should be
     }]
   },
   "function":{

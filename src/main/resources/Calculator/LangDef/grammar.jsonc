@@ -1,0 +1,33 @@
+
+{
+  "start" : "program",
+
+  "program": {
+    "repeating": {
+           "match": ["statement", "end"]
+           , "save" : "statement"
+    }
+    , "save" : "block"
+  },
+
+  "statement" : {
+      "options": [
+        {"match": ["variable", "equals", "expression"],"save" : "assign"},
+        {"match": ["print", "expression"], "save" : "print"}
+      ]
+  },
+
+  "expression": {
+    "options": [
+            {"match": ["minus", "expression"]},
+            {"match": ["expression", {"options" : ["mul", "div"]}, "expression"], "save" : "group"},
+            {"match": ["expression", {"options" : ["add", "sub"]}, "expression"], "save" : "bin"},
+            {"match": ["{", "expression", "}"], "save" : "group"},
+            {"match": ["(", "expression", ")"], "save" : "group"},
+            {"match": ["float"], "save" : "literal"},
+            {"match": ["integer"], "save" : "literal"},
+            {"match": ["string"], "save" : "literal"},
+            {"match": ["variable"], "save" : "variable"}
+          ]
+  }
+}
