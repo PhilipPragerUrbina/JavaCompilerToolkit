@@ -1,33 +1,77 @@
-
 {
-  "start" : "program",
-
-  "program": {
-    "repeating": {
-           "match": ["statement", "end"]
-           , "save" : "statement"
-    }
-    , "save" : "block"
-  },
-
-  "statement" : {
-      "options": [
-        {"match": ["variable", "equals", "expression"],"save" : "assign"},
-        {"match": ["print", "expression"], "save" : "print"}
-      ]
-  },
-
+  "start": "expression",
   "expression": {
-    "options": [
-            {"match": ["minus", "expression"]},
-            {"match": ["expression", {"options" : ["mul", "div"]}, "expression"], "save" : "group"},
-            {"match": ["expression", {"options" : ["add", "sub"]}, "expression"], "save" : "bin"},
-            {"match": ["{", "expression", "}"], "save" : "group"},
-            {"match": ["(", "expression", ")"], "save" : "group"},
-            {"match": ["float"], "save" : "literal"},
-            {"match": ["integer"], "save" : "literal"},
-            {"match": ["string"], "save" : "literal"},
-            {"match": ["variable"], "save" : "variable"}
+    "match": [
+      "term"
+    ],
+    "save": "expression"
+  },
+  "term": {
+    "match": [
+      "factor",
+      {
+        "repeating": {
+          "match": [
+            {
+              "options": [
+                "plus",
+                "minus"
+              ]
+            },
+            "factor"
           ]
+        }
+      }
+    ],
+    "save": "binary"
+  },
+  "factor": {
+    "match": [
+      "unary",
+      {
+        "repeating": {
+          "match": [
+            {
+              "options": [
+                "mul",
+                "div"
+              ]
+            },
+            "unary"
+          ]
+        }
+      }
+    ],
+    "save": "binary"
+  },
+  "unary": {
+    "options": [
+      {
+        "match": [
+          "minus",
+          "unary"
+        ],
+        "save": "unary"
+      },
+      "primary"
+    ]
+  },
+  "primary": {
+    "options": [
+      {
+        "match": [
+          "integer"
+        ],
+        "save": "literal"
+      },
+      {
+        "match": [
+          "(",
+          "expression",
+          ")"
+        ],
+        "save": "group"
+      }
+    ]
   }
 }

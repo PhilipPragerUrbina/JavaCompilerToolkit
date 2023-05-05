@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Interprets a grammar on the fly to parse rather than generating code
@@ -102,7 +103,7 @@ public class InterpretedParser extends Parser {
                     break;
                 }
                 if(!found){
-                    return new TraverseInfo(false, null,null);
+                    return new TraverseInfo(false, null,null); //todo exception instead
                 }
             }else if((node = json_parent.optJSONObject("optional")) != null){
                 int snapshot = getSnapShot();
@@ -115,19 +116,26 @@ public class InterpretedParser extends Parser {
                 }
             }
 
-            String name;
-            if((name = json_parent.optString("save")) != null){
+            String name = json_parent.optString("save");
+            if(Objects.equals(name, "")){
+                if(collected_nodes.size() < 2){
+                    return new TraverseInfo(true, collected_nodes.isEmpty() ? null : collected_nodes.get(0), collected_tokens.isEmpty() ? null : collected_tokens.get(0) );
+                }else{
+                    //todo warning system
+                    name = "temp";
+                    System.err.println("Branching node not saved, creating temporary node.");
+                }
 
-                ASTNode[] nodes = new ASTNode[collected_nodes.size()];
-                collected_nodes.toArray(nodes);
-                Token[] tokens = new Token[collected_tokens.size()];
-                collected_tokens.toArray(tokens);
-              return new TraverseInfo(true,new GeneralASTNode(nodes, tokens,name), null);
             }
-            return new TraverseInfo(true,collected_nodes.isEmpty() ?  null : collected_nodes.get(0),null);
+            ASTNode[] nodes = new ASTNode[collected_nodes.size()];
+            collected_nodes.toArray(nodes);
+            Token[] tokens = new Token[collected_tokens.size()];
+            collected_tokens.toArray(tokens);
+            return new TraverseInfo(true,new GeneralASTNode(nodes, tokens,name), null);
         }
 
     }
+
 
 
 }

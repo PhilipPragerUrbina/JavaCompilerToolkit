@@ -7,7 +7,7 @@ import Lexicographer.FrontEnd.Lexer.*;
 public class CalculatorLexer implements Lexer {
 	//Sorted by priority
 	private final String[] types = {null,"string","(",")","float","print","end","{","}","minus","mul","integer","plus","div","equals","variable"};
-	private final Pattern[] patterns = {Pattern.compile("\\/\\/.*\\n"),Pattern.compile("\"([^\"]+)\""),Pattern.compile("\\("),Pattern.compile("\\)"),Pattern.compile("(?<!\\w)(\\d+\\.\\d+)(?!\\w)"),Pattern.compile("(?<!\\w)print(?!\\w)"),Pattern.compile(";"),Pattern.compile("\\{"),Pattern.compile("\\}"),Pattern.compile("\\-"),Pattern.compile("\\*"),Pattern.compile("(?<!\\w)(\\d+)[^\\.\\d]{1}(?!\\w)"),Pattern.compile("\\+"),Pattern.compile("\\/"),Pattern.compile("\\="),Pattern.compile("(\\w+)")};
+	private final Pattern[] patterns = {Pattern.compile("\\/\\/.*\\n"),Pattern.compile("\"([^\"]+)\""),Pattern.compile("\\("),Pattern.compile("\\)"),Pattern.compile("(?<!\\w)(\\d+\\.\\d+)(?!\\w)"),Pattern.compile("(?<!\\w)print(?!\\w)"),Pattern.compile("\\;"),Pattern.compile("\\{"),Pattern.compile("\\}"),Pattern.compile("\\-"),Pattern.compile("\\*"),Pattern.compile("(?<!\\w)(\\d+)[^\\.\\d]{1}(?!\\w)"),Pattern.compile("\\+"),Pattern.compile("\\/"),Pattern.compile("\\="),Pattern.compile("(\\w+)")};
 	public ArrayList<Token> tokenize(String file){
 		ArrayList<Token> tokens = new ArrayList<>();
 		for(int i = 0; i < patterns.length; i++){

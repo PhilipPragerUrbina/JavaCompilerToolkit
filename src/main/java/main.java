@@ -1,6 +1,7 @@
 import Demo.Generated.CalculatorLexer;
 
 import Lexicographer.FrontEnd.AST.ASTNode;
+import Lexicographer.FrontEnd.AST.GeneralASTNode;
 import Lexicographer.FrontEnd.LanguageDefinition;
 import Lexicographer.FrontEnd.Lexer.Lexer;
 import Lexicographer.FrontEnd.Lexer.LexerGenerator;
@@ -14,6 +15,7 @@ import Lexicographer.IO.OutFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class main {
@@ -36,7 +38,9 @@ public class main {
         Lexer boilerPlate = new CalculatorLexer();
 
 
-        ArrayList<Token> tokens = boilerPlate.tokenize(" print 2 + 2 ;");
+        ArrayList<Token> tokens = boilerPlate.tokenize(" (2 + 4) * 5 - 6 * -3 ");
+
+
         for (Token token: tokens) {
             if(token.getContents() == null){
                 System.out.println(token.getType());
@@ -49,21 +53,7 @@ public class main {
         ASTNode top = parser.parse();
         System.out.println(top);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        graphVis((GeneralASTNode) top);
 
 
 
@@ -116,5 +106,18 @@ public class main {
 
 
 
+    }
+
+    private static void graphVis(GeneralASTNode node) {
+        String important_info = "";
+        for (Token token : node.getParameters()) {
+            important_info += " " + (token.getContents() == null ? token.getType() : token.getContents());
+        }
+
+        System.out.println(node.hashCode() + " [label=\"" + node.getType_name() + " " + important_info + "\"];");
+        for (ASTNode child : node.getChildren()) {
+            System.out.println(node.hashCode() + " -> " + ((GeneralASTNode)child).hashCode() +";" );
+            graphVis((GeneralASTNode) child);
+        }
     }
 }
