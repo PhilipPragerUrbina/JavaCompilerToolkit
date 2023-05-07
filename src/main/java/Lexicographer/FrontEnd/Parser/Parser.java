@@ -76,21 +76,22 @@ public abstract class Parser {
     }
 
     /**
-     * Check if at end of token lists
+     * Check if at end of token list
      */
     protected boolean end(){
         return idx == tokens.size();
     }
 
     /**
-     * Check the last token
+     * Get the last token without changing state
+     * Should not be called first
      */
     protected Token last(){
         return tokens.get(idx-1);
     }
 
     /**
-     * Check the next token
+     * Get the next token without changing state
      */
     protected Token peek(){
         return tokens.get(idx);

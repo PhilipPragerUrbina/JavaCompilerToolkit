@@ -1,15 +1,18 @@
 import Demo.Generated.CalculatorLexer;
 
 import Lexicographer.FrontEnd.AST.ASTNode;
-import Lexicographer.FrontEnd.AST.GeneralASTNode;
+
 import Lexicographer.FrontEnd.LanguageDefinition;
 import Lexicographer.FrontEnd.Lexer.Lexer;
 import Lexicographer.FrontEnd.Lexer.LexerGenerator;
 import Lexicographer.FrontEnd.Lexer.Token;
 import Lexicographer.FrontEnd.Parser.InterpretedParser;
 import Lexicographer.FrontEnd.Parser.ParserGenerator;
+import Lexicographer.FrontEnd.Parser.ParserSpecification;
+import Lexicographer.FrontEnd.Parser.Visitors.ParserSpecificationWriter;
 import Lexicographer.IO.InFile;
 import Lexicographer.IO.OutFile;
+
 
 
 import java.io.File;
@@ -23,39 +26,16 @@ public class main {
     public static void main(String[] args) throws Exception {
 
 
-        LanguageDefinition langdef = new LanguageDefinition(new File("Calculator/LangDef/language.jsonc"),new File("Calculator/LangDef/grammar.jsonc"),new File("Calculator/LangDef/tokens.jsonc"));
-        System.out.println(langdef.getLanguageName());
-        System.out.println(langdef.getLanguageDescription());
-        System.out.println(langdef.getLanguageVersion());
-        System.out.println(langdef.getTokenSpecifications());
-
-        LexerGenerator generator = new LexerGenerator(langdef.getTokenSpecifications(),langdef.getLanguageName(),"Demo.Generated");
-        ParserGenerator parserGenerator = new ParserGenerator(langdef.getParserGrammar(), "Demo.Generated", langdef.getLanguageName());
-
-        OutFile file = new OutFile("C:/Users/Philip/IdeaProjects/Lexicographer/src/main/java/Demo/Generated/CalculatorLexer.java", false);
-        file.writeText(generator.getCode());
-
-        Lexer boilerPlate = new CalculatorLexer();
+        ParserSpecification specification = new ParserSpecification(new File("Calculator/LangDef/grammar.jsonc"));
 
 
-        ArrayList<Token> tokens = boilerPlate.tokenize(" (2 + 4) * 5 - 6 * -3 ");
+        ParserSpecificationWriter writer = new ParserSpecificationWriter(specification);
+        writer.writeJSON(new OutFile("out.json",true));
+        ArrayList<Token> tokens = new ArrayList<>();
 
-
-        for (Token token: tokens) {
-            if(token.getContents() == null){
-                System.out.println(token.getType());
-            }else{
-                System.out.println(token.getContents() + ":" + token.getType() + " ");
-            }
-        }
-
-        InterpretedParser parser = new InterpretedParser(tokens,langdef.getParserGrammar());
-        ASTNode top = parser.parse();
-        System.out.println(top);
-
-        graphVis((GeneralASTNode) top);
-
-
+        InterpretedParser parser = new InterpretedParser(tokens, specification);
+        ASTNode node = parser.parse();
+        System.out.println(node);
 
 
         /*
@@ -108,7 +88,7 @@ public class main {
 
     }
 
-    private static void graphVis(GeneralASTNode node) {
+   /* private static void graphVis(GeneralASTNode node) {
         String important_info = "";
         for (Token token : node.getParameters()) {
             important_info += " " + (token.getContents() == null ? token.getType() : token.getContents());
@@ -119,5 +99,5 @@ public class main {
             System.out.println(node.hashCode() + " -> " + ((GeneralASTNode)child).hashCode() +";" );
             graphVis((GeneralASTNode) child);
         }
-    }
+    }*/
 }

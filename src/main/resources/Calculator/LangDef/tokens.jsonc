@@ -73,6 +73,6 @@
   //Identifier is lowest priority
   "variable": {
     "pattern" : "(\\w+)",
-    "priority" : 3,
+    "priority" : 3
   }
 }

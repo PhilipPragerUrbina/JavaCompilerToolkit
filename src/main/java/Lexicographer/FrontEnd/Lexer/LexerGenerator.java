@@ -10,6 +10,7 @@ import java.util.Comparator;
  */
 public class LexerGenerator extends JavaGenerator {
 
+    //todo switch to lexer specification
     /**
      * Generate Lexer Java code
      * @param specifications Tokens to generate
