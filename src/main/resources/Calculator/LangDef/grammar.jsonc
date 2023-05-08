@@ -19,11 +19,11 @@
               ]
             },
             "factor"
-          ]
+          ],
+          "save": "binary"
         }
       }
-    ],
-    "save": "binary"
+    ]
   },
   "factor": {
     "match": [
@@ -38,11 +38,11 @@
               ]
             },
             "unary"
-          ]
+          ],
+          "save": "binary"
         }
       }
-    ],
-    "save": "binary"
+    ]
   },
   "unary": {
     "options": [

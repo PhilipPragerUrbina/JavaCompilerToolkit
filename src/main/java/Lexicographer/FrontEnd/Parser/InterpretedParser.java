@@ -26,23 +26,23 @@ public class InterpretedParser extends Parser implements ParserSpecificationVisi
     }
 
     /**
-     * Info used for interpretation
+     * Info that is passed up
      */
     public static class TraverseInfo{
         public boolean valid;
-        public ASTNode node;
-        public Token token;
+        public ArrayList<ASTNode> nodes;
+        public ArrayList<Token> tokens;
 
         /**
          * Create info on a traversal
          * @param valid Did it match?
-         * @param node Did it create a node?
-         * @param token Did it match a token?
+         * @param nodes Did it create a node?
+         * @param tokens Did it match a token?
          */
-        public TraverseInfo(boolean valid, ASTNode node, Token token) {
+        public TraverseInfo(boolean valid, ArrayList<ASTNode> nodes, ArrayList<Token> tokens) {
             this.valid = valid;
-            this.node = node;
-            this.token = token;
+            this.nodes = nodes;
+            this.tokens = tokens;
         }
     }
 
@@ -51,7 +51,7 @@ public class InterpretedParser extends Parser implements ParserSpecificationVisi
         TraverseInfo info = specification.getEntry().accept(this);
         //todo more detailed error checking, as well as warning system(Warning exception that is caught by warning manager, can have different severities and so on.)
         if(!info.valid) throw new Exception("Error parsing.");
-        return info.node;
+        return info.nodes.get(0);
     }
 
     @Override
@@ -66,8 +66,8 @@ public class InterpretedParser extends Parser implements ParserSpecificationVisi
                 restoreSnapShot(snapshot);
                 continue;
             }
-            if(info.token != null){collected_tokens.add(info.token);}
-            if(info.node != null){collected_nodes.add(info.node);}
+            collected_nodes.addAll(info.nodes);
+            collected_tokens.addAll(info.tokens);
             found = true;
             break;
         }
@@ -84,12 +84,8 @@ public class InterpretedParser extends Parser implements ParserSpecificationVisi
         int snapshot = getSnapShot();
         TraverseInfo info = node.getChild().accept(this);
         if (info.valid) {
-            if (info.token != null) {
-                collected_tokens.add(info.token);
-            }
-            if (info.node != null) {
-                collected_nodes.add(info.node);
-            }
+            collected_nodes.addAll(info.nodes);
+            collected_tokens.addAll(info.tokens);
         } else {
             restoreSnapShot(snapshot);
         }
@@ -107,8 +103,8 @@ public class InterpretedParser extends Parser implements ParserSpecificationVisi
                 restoreSnapShot(snapshot);
                 return new TraverseInfo(false, null,null);
             }
-            if(info.token != null){collected_tokens.add(info.token);}
-            if(info.node != null){collected_nodes.add(info.node);}
+            collected_nodes.addAll(info.nodes);
+            collected_tokens.addAll(info.tokens);
         }
         return collect(node.getSaveName(), collected_tokens,collected_nodes);
     }
@@ -126,8 +122,8 @@ public class InterpretedParser extends Parser implements ParserSpecificationVisi
                 break;
             }
             count++;
-            if(info.token != null){collected_tokens.add(info.token);}
-            if(info.node != null){collected_nodes.add(info.node);}
+            collected_nodes.addAll(info.nodes);
+            collected_tokens.addAll(info.tokens);
         }
         if(count < node.getMinimumRepeat()) { //Does not meet min requirements
             return new TraverseInfo(false, null,null);
@@ -138,7 +134,11 @@ public class InterpretedParser extends Parser implements ParserSpecificationVisi
     @Override
     public TraverseInfo visit(TerminalNode node) {
         boolean match = match(node.getValue());
-        return new TraverseInfo(match, null, match ? last() : null);
+        ArrayList<Token> token = new ArrayList<>();
+        if(match){
+            token.add(last());
+        }
+        return new TraverseInfo(match, new ArrayList<>(), match ? token : null);
     }
 
     @Override
@@ -161,14 +161,16 @@ public class InterpretedParser extends Parser implements ParserSpecificationVisi
      */
     private static TraverseInfo collect(String save,ArrayList<Token> collected_tokens, ArrayList<ASTNode> collected_nodes) {
         if(save == null){
-            if(collected_nodes.size() < 2){
-                return new TraverseInfo(true, collected_nodes.isEmpty() ? null : collected_nodes.get(0), collected_tokens.isEmpty() ? null : collected_tokens.get(0) );
-            }else{
-                save= "temp";
-                System.err.println("Branching node not saved, creating temporary node."); //todo change to warning
-            }
+            return new TraverseInfo(true, collected_nodes,collected_tokens);
         }
-        return new TraverseInfo(true,new ASTNode(collected_nodes, collected_tokens,save), null);
+        if(collected_nodes.size() > 1 && collected_nodes.get(1).backtrack()){
+            ASTNode node = collected_nodes.remove(0);
+            collected_nodes.get(0).getChildren().add(node);
+            return collect(save,collected_tokens,collected_nodes);
+        }
+        ArrayList<ASTNode> node = new ArrayList<>();
+        node.add(new ASTNode(collected_nodes, collected_tokens,save, save.equals("binary")));
+        return new TraverseInfo(true,node, new ArrayList<>()); //Combine
     }
 
 }
