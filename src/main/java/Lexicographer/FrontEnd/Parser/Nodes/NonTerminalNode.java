@@ -14,8 +14,8 @@ public class NonTerminalNode extends ParserNode {
      * Create a non-terminal node
      * @param value Reference to top level node
      */
-    public NonTerminalNode(WeakReference<TopLevelNode> value, String save_name){
-        super(save_name);
+    public NonTerminalNode(WeakReference<TopLevelNode> value,boolean back_track, String save_name){
+        super(save_name,back_track);
         this.value = value;
     }
 

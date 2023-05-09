@@ -18,14 +18,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Scanner;
 
 public class main {
 
     public static void main(String[] args) throws Exception {
 
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter expression such as \"1*2+((4)+-2+3.0)*5\""); //27.0
+        String expr = scanner.nextLine();
+
         LexerSpecification lexer_spec = new LexerSpecification(new File("Calculator/LangDef/tokens.jsonc"));
         InterpretedLexer lexer = new InterpretedLexer(lexer_spec);
-        ArrayList<Token> tokens = lexer.tokenize(" 1 * 2 + ( (4) + -2 + 3) * 5 ");
+        ArrayList<Token> tokens = lexer.tokenize(expr);
         System.out.println(tokens);
 
         ParserSpecification specification = new ParserSpecification(new File("Calculator/LangDef/grammar.jsonc"));
@@ -66,7 +71,7 @@ public class main {
         }
     }
 
-    private static int calculate(ASTNode node) {
+    private static float calculate(ASTNode node) {
       switch (node.getTypeName()){
           case "binary":
               if(node.getParameters().get(0).getType().equals("mul")){
@@ -83,6 +88,9 @@ public class main {
           case "group":
               return calculate(node.getChildren().get(0));
           case "literal":
+              if(node.getParameters().get(0).getType().equals("float")){
+                  return Float.parseFloat(node.getParameters().get(0).getContents());
+              }
               return Integer.parseInt(node.getParameters().get(0).getContents());
           case "unary":
               return -calculate(node.getChildren().get(0));

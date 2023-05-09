@@ -14,8 +14,8 @@ public class TopLevelNode extends ParserNode{
      * @param child Child node
      * @param node_name Name of node in JSON file
      */
-    public TopLevelNode(String save_name, ParserNode child, String node_name) {
-        super(save_name);
+    public TopLevelNode(String save_name,boolean back_track, ParserNode child, String node_name) {
+        super(save_name,back_track);
         this.child = child;
         this.node_name = node_name;
     }

@@ -12,8 +12,8 @@ public class TerminalNode extends ParserNode {
      * Create a terminal node
      * @param value Name of token
      */
-    public TerminalNode(String value, String save_name){
-        super(save_name);
+    public TerminalNode(String value, boolean back_track, String save_name){
+        super(save_name,back_track);
         this.value = value;
     }
 

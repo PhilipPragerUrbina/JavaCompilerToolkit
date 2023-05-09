@@ -18,11 +18,11 @@
       "priority" : 0
   },
   "float": {
-    "pattern" : "(?<!\\w)(\\d+\\.\\d+)(?!\\w)",
+    "pattern" : "(\\d+\\.\\d+)",
     "priority" : 1
   },
   "integer": {
-    "pattern" : "(?<!\\w)(\\d+)[^\\.\\d]{1}(?!\\w)",
+    "pattern" : "(\\d+)(?!\\.)",
     "priority" : 2
   },
   "print": {

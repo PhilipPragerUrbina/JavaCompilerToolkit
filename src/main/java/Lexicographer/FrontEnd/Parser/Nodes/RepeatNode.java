@@ -14,8 +14,8 @@ public class RepeatNode extends ParserNode{
      * @param minimum_repeat Minimum number to match
      * @param child Node to repeat
      */
-    public RepeatNode(String save_name, int minimum_repeat, ParserNode child) {
-        super(save_name);
+    public RepeatNode(String save_name,boolean back_track, int minimum_repeat, ParserNode child) {
+        super(save_name, back_track);
         this.minimum_repeat = minimum_repeat;
         this.child = child;
     }

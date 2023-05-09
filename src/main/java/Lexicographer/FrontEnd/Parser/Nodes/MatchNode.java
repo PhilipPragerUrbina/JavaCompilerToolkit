@@ -13,8 +13,8 @@ public class MatchNode extends ParserNode{
      * Create a node to match terms in order
      * @param list List of things to match
      */
-    public MatchNode(String save_name, ParserNode[] list) {
-        super(save_name);
+    public MatchNode(String save_name,boolean back_track, ParserNode[] list) {
+        super(save_name,back_track);
         this.list = list;
     }
 

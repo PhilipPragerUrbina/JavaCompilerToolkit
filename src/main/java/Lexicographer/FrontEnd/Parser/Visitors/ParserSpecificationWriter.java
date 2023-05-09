@@ -76,6 +76,9 @@ public class ParserSpecificationWriter implements ParserSpecificationVisitor<Obj
         JSONObject json_object = new JSONObject();
         json_object.put("repeating", node.getChild().accept(this));
         json_object.put("min_count", node.getMinimumRepeat());
+        if(node.getBackTrack()){
+            json_object.put("back_track", true);
+        }
         json_object.put("save",node.getSaveName());
         return json_object;
     }

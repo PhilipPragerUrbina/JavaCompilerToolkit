@@ -8,14 +8,17 @@ import Lexicographer.FrontEnd.Parser.Visitors.ParserSpecificationVisitor;
 public abstract class ParserNode {
 
     public final String save_name;
+    protected final boolean back_track;
 
     /**
      * Create a node in a parse tree that represents how tokens should be parser
      * @param save_name Null if node should not be saved into AST, name of AST node type if it should become a node in the AST
      *                  For example: 'binary' or 'expression' and such.
+     * @param back_track Flag that specifies previous node(Usually when saving repeating nodes) to also be saved in same AST node
      */
-    public ParserNode (String save_name){
+    public ParserNode(String save_name, boolean back_track){
         this.save_name = save_name;
+        this.back_track = back_track;
     }
 
     /**
@@ -35,4 +38,11 @@ public abstract class ParserNode {
      */
     public abstract <ReturnType> ReturnType accept(ParserSpecificationVisitor<ReturnType> visitor);
 
+    /**
+     * If last node should be added as child.
+     * Useful in specific cases where left recursion would normally be used
+     */
+    public boolean getBackTrack() {
+        return back_track;
+    }
 }

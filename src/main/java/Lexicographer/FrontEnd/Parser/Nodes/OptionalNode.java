@@ -12,8 +12,8 @@ public class OptionalNode extends ParserNode{
      * Create an optional node
      * @param child Node that should be optional
      */
-    public OptionalNode(String save_name, ParserNode child) {
-        super(save_name);
+    public OptionalNode(String save_name, boolean back_track,ParserNode child) {
+        super(save_name,back_track);
         this.child = child;
     }
 

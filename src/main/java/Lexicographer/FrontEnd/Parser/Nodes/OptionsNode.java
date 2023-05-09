@@ -14,8 +14,8 @@ public class OptionsNode extends ParserNode{
      * Create a node with multiple options to choose from
      * @param options Options to choose from.
      */
-    public OptionsNode(ParserNode[] options, String save_name){
-        super(save_name);
+    public OptionsNode(ParserNode[] options,boolean back_track, String save_name){
+        super(save_name,back_track);
         this.options = options;
     }
 

@@ -50,7 +50,7 @@ public class ParserSpecification {
             JSONObject node = json_root.optJSONObject(key);
             if(node == null) throw new IOException("Parser JSON defines top level node of invalid type: " + key);
 
-            top_level.put(key, new TopLevelNode(null, null, key)); //Top level nodes can not be saved, as they don't directly contain information
+            top_level.put(key, new TopLevelNode(null, false,null, key)); //Top level nodes can not be saved, as they don't directly contain information
         }
 
         for(TopLevelNode node : top_level.values()){
@@ -114,9 +114,9 @@ public class ParserSpecification {
     private ParserNode processFromJSON(Object parent) throws IOException {
         if (parent instanceof String) {
             if(getTopLevelNode((String)parent) != null){
-                return new NonTerminalNode(new WeakReference<>(getTopLevelNode((String)parent)), null);
+                return new NonTerminalNode(new WeakReference<>(getTopLevelNode((String)parent)), false,null);
             }
-            return new TerminalNode((String) parent, null);
+            return new TerminalNode((String) parent, false,null);
         } else {
             JSONObject json_parent = (JSONObject) parent;
             JSONObject node = null;
@@ -124,24 +124,25 @@ public class ParserSpecification {
 
             String save_name = json_parent.optString("save");
             if(save_name.isEmpty()) save_name = null;
+            boolean back_track = json_parent.optBoolean("back_track", false);
 
             if ((node = json_parent.optJSONObject("repeating")) != null) {
                 int min_repeat = node.optInt("min_count"); //Is 0 if not specified
-                return new RepeatNode(save_name, min_repeat, processFromJSON(node));
+                return new RepeatNode(save_name,back_track, min_repeat, processFromJSON(node));
             } else if ((list = json_parent.optJSONArray("match")) != null) {
                 ParserNode[] node_list = new ParserNode[list.length()];
                 for (int i = 0; i < list.length(); i++) {
                     node_list[i] = processFromJSON(list.get(i));
                 }
-                return new MatchNode(save_name, node_list);
+                return new MatchNode(save_name, back_track,node_list);
             } else if ((list = json_parent.optJSONArray("options")) != null) {
                 ParserNode[] node_list = new ParserNode[list.length()];
                 for (int i = 0; i < list.length(); i++) {
                     node_list[i] = processFromJSON(list.get(i));
                 }
-                return new OptionsNode(node_list, save_name);
+                return new OptionsNode(node_list, back_track,save_name);
             } else if ((node = json_parent.optJSONObject("optional")) != null) {
-                return new OptionalNode(save_name, processFromJSON(node));
+                return new OptionalNode(save_name, back_track,processFromJSON(node));
             }
         }
         throw new IOException("Invalid node in parser JSON: " + parent);

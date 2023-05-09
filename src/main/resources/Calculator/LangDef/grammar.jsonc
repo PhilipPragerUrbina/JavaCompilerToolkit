@@ -20,7 +20,8 @@
             },
             "factor"
           ],
-          "save": "binary"
+          "save": "binary",
+          "back_track": true
         }
       }
     ]
@@ -39,7 +40,9 @@
             },
             "unary"
           ],
-          "save": "binary"
+          "save": "binary",
+          "back_track": true
+
         }
       }
     ]
@@ -61,6 +64,12 @@
       {
         "match": [
           "integer"
+        ],
+        "save": "literal"
+      },
+      {
+        "match": [
+          "float"
         ],
         "save": "literal"
       },
