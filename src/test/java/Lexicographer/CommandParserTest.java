@@ -1,6 +1,6 @@
 package Lexicographer;
 
-import Lexicographer.IO.CommandParser;
+import JavaCompilerToolkit.Lexicographer.IO.CommandParser;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

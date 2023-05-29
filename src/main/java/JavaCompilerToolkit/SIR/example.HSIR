@@ -1,0 +1,80 @@
+//Welcome to human readable SIR
+//This is how a disassembled SIR program will look like
+
+module Math; //The name of the current module(Normally has to correspond to the file name).
+
+import Trig; // Which other modules are needed, so structs and methods from those can be accessed
+//Imports must be direct. You must explicit import any module whose method or structs you are using.
+
+//Make a struct(can contain other structs)
+struct Complex {
+    float(32); //Real
+    float(32); //imaginary
+     //Specify size for primitive types
+}
+
+//Here is a method
+//name arguments and return type
+complexAdd Complex a, float(32) r -> Complex {
+[0]: //This is a block
+    //Here we allocate some memory on the stack
+    salloc Complex => out; //Identifier are automatically created when used
+    add a[0] r => out[0]; //Instructions are in the format: opcode input_operands => output_operands;
+    add a[1] r => out[1]; //Struct members are accessed by index.
+    //Actual non human readable bitcode contains precomputed offsets for structs, as well as extra type info
+    return out; //We dont free it since we return it. All identifiers represent either a reference to some memory, or a register!
+    //not all instructions have output operands
+}
+
+//Externs are supported
+extern printFloat Float(32) a -> void;
+extern printf int(8)* a, int(32) -> void;
+
+main -> int(32){
+[0]:
+    salloc Complex => a;
+    salloc float(32) => b;
+    set 2.0f => a[0]; //Literals/constants can be written in the code.
+    set 4.0f => a[1];//todo should indexing of arrays or structs be seperate instruction
+    set 3.0f => b;
+    Trig.sin b -> b; //Functions from imports must be specified
+    complexAdd a b -> output;
+    printFloat output -> void;//Methods must have ->
+    sfree a;
+    sfree b;
+    sfree output; //make sure to always free references
+
+    cmp a[0] b => thebool; //This is valid, since thebool would just become a register when compiled
+    //But if I passed thebool around, it would cause a compile error, since thebool does not have any reserved memory
+    nextif thebool;
+    goto 1; //Goto a block of choice
+    return 0;
+[1]:
+    salloc float(32) 4 => array; //Here is how an array of size 4 is made. array is of type float(32)*
+    set 2 => array[2]; //Access by index !no bound checks!.
+    printFloat array[2] -> void;
+    sfree array 4; //Free with size
+    return 1;
+(fleebee)(foobar)[2]: //only use this version of the block if fleebee and foobar are supported by the compile target
+    fleebee 2.0f 3.0f => a; // Custom instructions are supported. Also statements like these can be optimized easily.
+[2]: //This inaccasible block would be removed by dead code optimization
+    //Note that this is just HSIR. Normal bytecode SIR has a lot of extra precomputed information.
+    //Functions have full scope
+    memadress a => a_ptr; //Get a register with the memory address where A is
+    salloc Complex* => a_ptr; //Allocate an int to store the memory address pf a
+    memadress a => a_ptr; //Now a_ptr is a reference to a bit of memory the stores the memory address of a
+    deref a_ptr => a_2; //Now I have a second reference to a
+    printf "%d" , 2 -> void; //String literals are also supported well. char(8)*
+    set 2.0 => reg; //double
+    set 10110100b => reg; //binary
+    set true => reg; //single bit/boolean
+
+}
+
+//Want to run in a JIT or interpreter, we have some goodies
+divideFunc ? a, ? b -> ? { //Resolved during interpretation
+    galloc ? => c; //Memory will be garbage collected. (can also be compiled using ref counting)
+    div a b => c;
+    return c;
+}
+

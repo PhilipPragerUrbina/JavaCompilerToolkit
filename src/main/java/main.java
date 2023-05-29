@@ -1,24 +1,23 @@
-import Demo.Generated.CalculatorLexer;
-
-import Lexicographer.FrontEnd.AST.ASTNode;
+import JavaCompilerToolkit.Lexicographer.FrontEnd.AST.ASTNode;
 
 
-import Lexicographer.FrontEnd.Lexer.*;
-import Lexicographer.FrontEnd.Parser.InterpretedParser;
-import Lexicographer.FrontEnd.Parser.ParserGenerator;
-import Lexicographer.FrontEnd.Parser.ParserSpecification;
-import Lexicographer.FrontEnd.Parser.Visitors.ParserSpecificationWriter;
-import Lexicographer.IO.InFile;
-import Lexicographer.IO.OutFile;
+import JavaCompilerToolkit.Lexicographer.FrontEnd.AST.ASTVisualization;
+import JavaCompilerToolkit.Lexicographer.FrontEnd.Lexer.InterpretedLexer;
+import JavaCompilerToolkit.Lexicographer.FrontEnd.Lexer.LexerSpecification;
+import JavaCompilerToolkit.Lexicographer.FrontEnd.Lexer.Token;
+
+import JavaCompilerToolkit.Lexicographer.FrontEnd.Parser.InterpretedParser;
+import JavaCompilerToolkit.Lexicographer.FrontEnd.Parser.ParserSpecification;
+import JavaCompilerToolkit.Lexicographer.FrontEnd.Parser.Visitors.ParserSpecificationWriter;
+import JavaCompilerToolkit.Lexicographer.IO.OutFile;
 
 
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
 import java.util.Scanner;
+
+//todo steal test suites from others, develop framework with json files to define expected ouput of test. Run each test with as many backends as possible. https://brson.github.io/2017/07/10/how-rust-is-tested#s-ut
 
 public class main {
 
@@ -40,7 +39,8 @@ public class main {
         ASTNode node = parser.parse();
         System.out.println(node);
         System.out.println("\n\n\n");
-        graphVis(node);
+        ASTVisualization visualization = new ASTVisualization(node);
+        System.out.println(visualization.getDot());
 
        System.out.println("Answer: "+ calculate(node));
 
@@ -58,30 +58,20 @@ public class main {
         */
     }
 
-   private static void graphVis(ASTNode node) {
-        String important_info = "";
-        for (Token token : node.getParameters()) {
-            important_info += " " + (token.getContents() == null ? token.getType() : token.getContents());
-        }
 
-        System.out.println(node.hashCode() + " [label=\"" + node.getTypeName() + " " + important_info + "\"];");
-        for (ASTNode child : node.getChildren()) {
-            System.out.println(node.hashCode() + " -> " + ((ASTNode)child).hashCode() +";" );
-            graphVis((ASTNode) child);
-        }
-    }
 
     private static float calculate(ASTNode node) {
       switch (node.getTypeName()){
           case "binary":
-              if(node.getParameters().get(0).getType().equals("mul")){
-                  return calculate(node.getChildren().get(0)) * calculate(node.getChildren().get(1));
-              }else   if(node.getParameters().get(0).getType().equals("div")){
-                  return calculate(node.getChildren().get(0)) / calculate(node.getChildren().get(1));
-              }else   if(node.getParameters().get(0).getType().equals("plus")){
-                  return calculate(node.getChildren().get(0)) + calculate(node.getChildren().get(1));
-              }else   if(node.getParameters().get(0).getType().equals("minus")){
-                  return calculate(node.getChildren().get(0)) - calculate(node.getChildren().get(1));
+              switch (node.getParameters().get(0).getType()) {
+                  case "mul":
+                      return calculate(node.getChildren().get(0)) * calculate(node.getChildren().get(1));
+                  case "div":
+                      return calculate(node.getChildren().get(0)) / calculate(node.getChildren().get(1));
+                  case "plus":
+                      return calculate(node.getChildren().get(0)) + calculate(node.getChildren().get(1));
+                  case "minus":
+                      return calculate(node.getChildren().get(0)) - calculate(node.getChildren().get(1));
               }
           case "expression":
               return calculate(node.getChildren().get(0));

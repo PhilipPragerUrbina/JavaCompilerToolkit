@@ -1,7 +1,7 @@
 package Lexicographer.FrontEnd.Lexer;
 
-import Lexicographer.IO.OutFile;
-import org.junit.jupiter.api.AfterEach;
+import JavaCompilerToolkit.Lexicographer.FrontEnd.Lexer.*;
+import JavaCompilerToolkit.Lexicographer.IO.OutFile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +34,7 @@ class LexerGeneratorTest {
         specifications.add(new TokenSpecification("(?<!\\w)(foo|bar)(?!\\w)", 1,false, "foo_or_bar")); //Test a word
 
         //Generate code
-        LexerGenerator generator = new LexerGenerator(specifications, "test", "test");
+        LexerGenerator generator = new LexerGenerator(new LexerSpecification(specifications), "test", "test");
         String source = generator.getCode();
 
         //Put code in temporary directory.
