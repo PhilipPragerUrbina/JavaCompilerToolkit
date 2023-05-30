@@ -1,0 +1,15 @@
+{
+  "comment": {
+    "pattern" : "\\/\\/.*\\n",
+    "priority" : -1,
+    "discard" : true
+  },
+  "string": {
+    "pattern" : "\\\"([^\\\"]+)(\\w)\\\"", //Invalid due to too many capture groups
+    "priority" : 0
+  },
+  "float": {
+    "pattern" : "(\\d+\\.\\d+)",
+    "priority" : 1
+  }
+}

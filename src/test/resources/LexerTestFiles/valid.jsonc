@@ -1,0 +1,16 @@
+//Valid file
+{
+"comment": {
+"pattern" : "\\/\\/.*\\n",
+"priority" : -1,
+"discard" : true
+},
+"string": {
+"pattern" : "\\\"([^\\\"]+)\\\"",
+"priority" : 0
+},
+"float": {
+"pattern" : "(\\d+\\.\\d+)",
+"priority" : 1
+}
+}

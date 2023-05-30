@@ -1,5 +1,7 @@
 package JavaCompilerToolkit.Lexicographer.FrontEnd.Lexer;
 
+import java.util.Objects;
+
 /**
  * Represents how to lex a token
  */
@@ -37,6 +39,19 @@ public class TokenSpecification {
 
     public String getName(){
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TokenSpecification that = (TokenSpecification) o;
+        return priority == that.priority && discard == that.discard && Objects.equals(regex_pattern, that.regex_pattern) && Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(regex_pattern, priority, name, discard);
     }
 
     @Override

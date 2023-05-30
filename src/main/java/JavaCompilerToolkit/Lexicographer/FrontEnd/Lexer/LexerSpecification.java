@@ -1,5 +1,7 @@
 package JavaCompilerToolkit.Lexicographer.FrontEnd.Lexer;
 
+import JavaCompilerToolkit.Lexicographer.FrontEnd.Parser.Nodes.TopLevelNode;
+import JavaCompilerToolkit.Lexicographer.IO.OutFile;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -37,7 +39,10 @@ public class LexerSpecification {
         if(!json_file.exists()) throw new IOException("Unable to find lexer json file: " + json_file);
         if(!json_file.canRead()) throw new IOException("Unable to read lexer json file: " + json_file);
 
-        JSONObject json_root = (new JSONObject(new JSONTokener(new FileReader(json_file))));
+        FileReader reader = new FileReader(json_file);
+        JSONObject json_root = (new JSONObject(new JSONTokener(reader)));
+        reader.close();
+
         specifications = new ArrayList<>(json_root.keySet().size());
 
         for (String key : json_root.keySet()){
@@ -56,6 +61,18 @@ public class LexerSpecification {
             }
             specifications.add(new TokenSpecification(pattern,priority,discard,key));
         }
+    }
+
+    /**
+     * Write this token spec to a json file
+     * @param output Where to write to
+     */
+    public void writeJson(OutFile output) throws IOException {
+        JSONObject root = new JSONObject();
+        for (TokenSpecification specification: getSpecifications()) {
+            root.put(specification.getName(), new JSONObject().put("pattern", specification.getRegexPattern()).put("priority", specification.getPriority()).put("discard", specification.getDiscard()));
+        }
+        output.writeText(root.toString(1));
     }
 
     /**

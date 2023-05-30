@@ -1,0 +1,14 @@
+{
+  "comment": {
+    "pattern" : "\\/\\/.*\\n",  //Invalid due to incomplete token
+    "discard" : true
+  },
+  "string": {
+    "pattern" : "\\\"([^\\\"]+)\\\"",
+    "priority" : 0
+  },
+  "float": {
+    "pattern" : "(\\d+\\.\\d+)",
+    "priority" : 1
+  }
+}

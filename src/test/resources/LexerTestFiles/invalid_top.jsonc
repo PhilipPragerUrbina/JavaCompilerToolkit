@@ -1,0 +1,18 @@
+
+{
+  "comment": {
+    "pattern" : "\\/\\/.*\\n",
+    "priority" : -1,
+    "discard" : true
+  },
+  "string": {
+    "pattern" : "\\\"([^\\\"]+)\\\"",
+    "priority" : 0
+  },
+  "float": {
+    "pattern" : "(\\d+\\.\\d+)",
+    "priority" : 1
+  },
+
+  "invalid" : true //Invalid due to top level non-json object
+}
