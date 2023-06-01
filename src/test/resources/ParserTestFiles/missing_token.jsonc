@@ -1,0 +1,29 @@
+{
+  "start": "expression",
+  "expression": {
+    "match": [
+      "term"
+    ],
+    "save": "expression"
+  },
+  "term": {
+    "match": [
+      "foo",
+      {
+        "repeating": {
+          "match": [
+            {
+              "options": [
+                "heehee", //Missing token
+                "bar"
+              ]
+            },
+            "bar"
+          ],
+          "save": "binary",
+          "back_track": true
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "start": "expression",
+  "expression": {
+    "match": [],//empty
+    "save": "expression"
+  },
+  "term": {
+    "match": [
+      "foo",
+      {
+        "repeating": {
+          "match": [
+            {
+              "options": [
+                "foo",
+                "bar"
+              ]
+            },
+            "bar"
+          ],
+          "save": "binary",
+          "back_track": true
+        }
+      }
+    ]
+  }
+}

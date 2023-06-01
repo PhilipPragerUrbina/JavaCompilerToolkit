@@ -1,0 +1,78 @@
+//The json key is the identifier, to use in your grammar
+//Higher priority(lower number) is taken when there are multiple matches.
+//Enter your token matching regex as pattern
+//First capture group is considered the value. If this data is not needed, then dont put in a capture group.
+//For example you need to keep plus and minus to know what operation to perform. You also need to keep literals. But you dont need "while" since it is given by the AST node type, and you dont need "{" since things will already be grouped.
+//Anything that does not get picked up by a lexer pattern is ignored
+//To explicitly ignore things, add the discard true flag to get rid of such patterns. For example, comments.
+{
+
+  //literals
+  "comment": { //Comments have even higher priority
+        "pattern" : "\\/\\/.*\\n",
+        "priority" : -1,
+        "discard" : true
+    },
+  "string": { //String has highest priority to avoid matching inside of string
+      "pattern" : "\\\"([^\\\"]+)\\\"",
+      "priority" : 0
+  },
+  "float": {
+    "pattern" : "(\\d+\\.\\d+)",
+    "priority" : 1
+  },
+  "integer": {
+    "pattern" : "(\\d+)(?!\\.)",
+    "priority" : 2
+  },
+  "print": {
+      "pattern" : "(?<!\\w)print(?!\\w)",
+      "priority" : 1
+    },
+  //control flow
+  "{": {
+    "pattern" : "\\{",
+    "priority" : 1
+  },
+  "}": {
+    "pattern" : "\\}",
+    "priority" : 1
+  },
+  "(": {
+    "pattern" : "\\(",
+    "priority" : 1
+  },
+  ")": {
+    "pattern" : "\\)",
+    "priority" : 1
+  },
+  "end": {
+    "pattern" : "\\;",
+    "priority" : 1
+  },
+  "equals": {
+    "pattern" : "\\=",
+    "priority" : 2
+  },
+  "plus": {
+     "pattern" : "\\+",
+     "priority" : 2
+  },
+  "minus": {
+     "pattern" : "\\-",
+     "priority" : 2
+  },
+  "mul": {
+     "pattern" : "\\*",
+     "priority" : 2
+  },
+  "div": {
+     "pattern" : "\\/",
+     "priority" : 2
+  },
+  //Identifier is lowest priority
+  "variable": {
+    "pattern" : "(\\w+)",
+    "priority" : 3
+  }
+}

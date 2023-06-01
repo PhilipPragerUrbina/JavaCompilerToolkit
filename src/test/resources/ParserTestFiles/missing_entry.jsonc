@@ -1,0 +1,8 @@
+{ //No entry point
+  "expression": {
+    "match": [
+      "term"
+    ],
+    "save": "expression"
+  }
+}

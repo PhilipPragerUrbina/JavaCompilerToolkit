@@ -46,6 +46,7 @@ public class ParserSpecificationWriter implements ParserSpecificationVisitor<Obj
         }
         json_object.put("options", array);
         json_object.put("save",node.getSaveName());
+        json_object.put("back_track", node.getBackTrack());
         return json_object;
     }
 
@@ -54,6 +55,7 @@ public class ParserSpecificationWriter implements ParserSpecificationVisitor<Obj
         JSONObject json_object = new JSONObject();
         json_object.put("optional", node.getChild().accept(this));
         json_object.put("save",node.getSaveName());
+        json_object.put("back_track", node.getBackTrack());
         return json_object;
     }
 
@@ -66,6 +68,7 @@ public class ParserSpecificationWriter implements ParserSpecificationVisitor<Obj
         }
         json_object.put("match", array);
         json_object.put("save",node.getSaveName());
+        json_object.put("back_track", node.getBackTrack());
         return json_object;
     }
 
@@ -74,9 +77,9 @@ public class ParserSpecificationWriter implements ParserSpecificationVisitor<Obj
         JSONObject json_object = new JSONObject();
         json_object.put("repeating", node.getChild().accept(this));
         json_object.put("min_count", node.getMinimumRepeat());
-        if(node.getBackTrack()){
-            json_object.put("back_track", true);
-        }
+
+        json_object.put("back_track", node.getBackTrack());
+
         json_object.put("save",node.getSaveName());
         return json_object;
     }

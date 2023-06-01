@@ -1,0 +1,86 @@
+{
+  "start": "expression",
+  "expression": {
+    "match": [
+      "term"
+    ],
+    "save": "expression"
+  },
+  "term": {
+    "match": [
+      "factor",
+      {
+        "repeating": {
+          "match": [
+            {
+              "options": [
+                "plus",
+                "minus"
+              ]
+            },
+            "factor"
+          ],
+          "save": "binary",
+          "back_track": true
+        }
+      }
+    ]
+  },
+  "factor": {
+    "match": [
+      "unary",
+      {
+        "repeating": {
+          "match": [
+            {
+              "options": [
+                "mul",
+                "div"
+              ]
+            },
+            "unary"
+          ],
+          "save": "binary",
+          "back_track": true
+
+        }
+      }
+    ]
+  },
+  "unary": {
+    "options": [
+      {
+        "match": [
+          "minus",
+          "unary"
+        ],
+        "save": "unary"
+      },
+      "primary"
+    ]
+  },
+  "primary": {
+    "options": [
+      {
+        "match": [
+          "integer"
+        ],
+        "save": "literal"
+      },
+      {
+        "match": [
+          "float"
+        ],
+        "save": "literal"
+      },
+      {
+        "match": [
+          "(",
+          "expression",
+          ")"
+        ],
+        "save": "group"
+      }
+    ]
+  }
+}

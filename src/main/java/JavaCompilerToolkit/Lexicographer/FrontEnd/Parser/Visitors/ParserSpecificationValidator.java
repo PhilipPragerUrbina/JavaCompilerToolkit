@@ -82,7 +82,7 @@ public class ParserSpecificationValidator implements ParserSpecificationVisitor<
         String token_name = node.getValue();
         for (TokenSpecification possible_token: token_specification.getSpecifications()) {
             if(possible_token.getName().equals(token_name)){
-                return null;
+                return "";
             }
         }
         throw new ValidationException("Token not found: " + token_name);

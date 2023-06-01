@@ -1,6 +1,7 @@
 package JavaCompilerToolkit.Lexicographer.FrontEnd.AST;
 
 import JavaCompilerToolkit.Lexicographer.FrontEnd.Lexer.Token;
+import jdk.jshell.spi.ExecutionControl;
 
 /**
  * Generates a DOT file from an AST for visualization in Graphviz
@@ -23,7 +24,7 @@ public class ASTVisualization extends ASTVisitor<Void>{
      * Only run this once
      * @see "https://dreampuf.github.io/GraphvizOnline"
      */
-    public String getDot(){
+    public String getDot() throws ExecutionControl.NotImplementedException {
         graph.append("digraph G {\n");
         invokeGeneralVisit(getRootNode(), this::visitNode);
         graph.append("}\n");
@@ -34,7 +35,7 @@ public class ASTVisualization extends ASTVisitor<Void>{
     @Override
     protected void setup() {} //No setup, this class works on any node.
 
-    private Void visitNode(ASTNode node)  {
+    private Void visitNode(ASTNode node) throws ExecutionControl.NotImplementedException {
         StringBuilder important_info = new StringBuilder();
         for (Token token : node.getParameters()) {
             important_info.append(" ").append(token.getContents() == null ? token.getType() : token.getContents());

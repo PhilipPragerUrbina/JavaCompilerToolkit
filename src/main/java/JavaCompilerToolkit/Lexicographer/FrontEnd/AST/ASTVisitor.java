@@ -22,7 +22,7 @@ public abstract class ASTVisitor<T> {
      */
     @FunctionalInterface
     public interface VisitMethod<T> {
-        T execute(ASTNode node);
+        T execute(ASTNode node) throws ExecutionControl.NotImplementedException;
     }
 
     private HashMap<String, VisitMethod<T>> methods = new HashMap<>();
@@ -68,7 +68,7 @@ public abstract class ASTVisitor<T> {
      * @param method Method to use
      * @return Return value of your choice
      */
-    protected T invokeGeneralVisit(ASTNode node, VisitMethod<T> method){
+    protected T invokeGeneralVisit(ASTNode node, VisitMethod<T> method) throws ExecutionControl.NotImplementedException {
         return method.execute(node);
     }
 
