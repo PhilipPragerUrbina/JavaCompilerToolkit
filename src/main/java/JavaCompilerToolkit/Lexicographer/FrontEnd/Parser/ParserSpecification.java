@@ -30,7 +30,9 @@ public class ParserSpecification {
         if(!json_file.exists()) throw new IOException("Unable to find parser json file: " + json_file);
         if(!json_file.canRead()) throw new IOException("Unable to read parser json file: " + json_file);
 
-        JSONObject json_root = (new JSONObject(new JSONTokener(new FileReader(json_file))));
+        FileReader reader = new FileReader(json_file);
+        JSONObject json_root = (new JSONObject(new JSONTokener(reader)));
+        reader.close();
 
         entry = json_root.optString("start");
         if(entry == null) throw new IOException("Parser json does not define top level entry point string with key 'start'");

@@ -7,6 +7,7 @@ import JavaCompilerToolkit.Lexicographer.FrontEnd.AST.ASTNode;
 import JavaCompilerToolkit.Lexicographer.FrontEnd.Lexer.Token;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 
@@ -17,6 +18,8 @@ public class InterpretedParser extends Parser implements ParserSpecificationVisi
 
     private final ParserSpecification specification;
 
+    private final HashMap<ParseAction, TraverseInfo> cache = new HashMap<>();
+
     /**
      * Create a dynamic parser that interprets a parse tree
      * @param tokens Tokens to parse
@@ -25,6 +28,21 @@ public class InterpretedParser extends Parser implements ParserSpecificationVisi
     public InterpretedParser(ArrayList<Token> tokens, ParserSpecification specification) {
         super(tokens);
         this.specification = specification;
+    }
+
+    public static class ParseAction{
+        public final Class<? extends ParserNode> rule;
+        public final int snapshot;
+
+        public ParseAction(Class<? extends ParserNode> rule, int snapshot) {
+            this.rule = rule;
+            this.snapshot = snapshot;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(rule, snapshot);
+        }
     }
 
     /**
@@ -67,8 +85,20 @@ public class InterpretedParser extends Parser implements ParserSpecificationVisi
         return info.nodes.get(0);
     }
 
+    /**
+     * Add to cache before returning
+     */
+    private TraverseInfo cacheValue(ParseAction action, TraverseInfo info){
+        cache.put(action, info);
+        return info;
+    }
+
     @Override
     public TraverseInfo visit(OptionsNode node) throws Exception {
+        ParseAction action = new ParseAction(node.getClass(),getSnapShot());
+        if(cache.containsKey(action)) return  cache.get(action);
+        cache.put(action, new TraverseInfo(false,null,null,null));
+
         //Collect information to pass up
         ArrayList<Token> collected_tokens = new ArrayList<>();
         ArrayList<ASTNode> collected_nodes = new ArrayList<>();
@@ -93,13 +123,17 @@ public class InterpretedParser extends Parser implements ParserSpecificationVisi
             break;
         }
         if(!found){
-            return new TraverseInfo(false, errors,null,null);
+            return cacheValue(action,new TraverseInfo(false, errors,null,null));
         }
-        return collect(node.getSaveName(), collected_tokens,collected_nodes,node.getBackTrack());
+        return cacheValue(action,collect(node.getSaveName(), collected_tokens,collected_nodes,node.getBackTrack()));
     }
 
     @Override
     public TraverseInfo visit(OptionalNode node) throws Exception {
+        ParseAction action = new ParseAction(node.getClass(),getSnapShot()); //todo not repeat
+        if(cache.containsKey(action)) return  cache.get(action);
+        cache.put(action, new TraverseInfo(false,null,null,null));
+
         ArrayList<Token> collected_tokens = new ArrayList<>();
         ArrayList<ASTNode> collected_nodes = new ArrayList<>();
         int snapshot = getSnapShot();
@@ -110,11 +144,15 @@ public class InterpretedParser extends Parser implements ParserSpecificationVisi
         } else {
             restoreSnapShot(snapshot);
         }
-        return collect(node.getSaveName(), collected_tokens,collected_nodes,node.getBackTrack());
+        return cacheValue(action,collect(node.getSaveName(), collected_tokens,collected_nodes,node.getBackTrack()));
     }
 
     @Override
     public TraverseInfo visit(MatchNode node) throws Exception {
+        ParseAction action = new ParseAction(node.getClass(),getSnapShot());
+        if(cache.containsKey(action)) return  cache.get(action);
+        cache.put(action, new TraverseInfo(false,null,null,null));
+
         ArrayList<Token> collected_tokens = new ArrayList<>();
         ArrayList<ASTNode> collected_nodes = new ArrayList<>();
         for (ParserNode element : node.getList()) {
@@ -122,16 +160,20 @@ public class InterpretedParser extends Parser implements ParserSpecificationVisi
             TraverseInfo info = element.accept(this);
             if(!info.valid) {
                 restoreSnapShot(snapshot);
-                return new TraverseInfo(false, info.expected_tokens, null,null);
+                return cacheValue(action,new TraverseInfo(false, info.expected_tokens, null,null));
             }
             collected_nodes.addAll(info.nodes);
             collected_tokens.addAll(info.tokens);
         }
-        return collect(node.getSaveName(), collected_tokens,collected_nodes,node.getBackTrack());
+        return cacheValue(action,collect(node.getSaveName(), collected_tokens,collected_nodes,node.getBackTrack()));
     }
 
     @Override
     public TraverseInfo visit(RepeatNode node) throws Exception {
+        ParseAction action = new ParseAction(node.getClass(),getSnapShot());
+        if(cache.containsKey(action)) return  cache.get(action);
+        cache.put(action, new TraverseInfo(false,null,null,null));
+
         ArrayList<Token> collected_tokens = new ArrayList<>();
         ArrayList<ASTNode> collected_nodes = new ArrayList<>();
         int count = 0;
@@ -149,9 +191,9 @@ public class InterpretedParser extends Parser implements ParserSpecificationVisi
             collected_tokens.addAll(info.tokens);
         }
         if(count < node.getMinimumRepeat()) { //Does not meet min requirements
-            return new TraverseInfo(false,error, null,null);
+            return cacheValue(action,new TraverseInfo(false,error, null,null));
         }
-        return collect(node.getSaveName(), collected_tokens,collected_nodes, node.getBackTrack());
+        return cacheValue(action,collect(node.getSaveName(), collected_tokens,collected_nodes, node.getBackTrack()));
     }
 
 

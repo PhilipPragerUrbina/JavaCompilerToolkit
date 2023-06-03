@@ -1,0 +1,62 @@
+// LGDL(Lexicographer grammar definition language)
+// Used to define these types of grammar easier
+{
+
+  //Literals
+  "comment": { //C stye comments
+    "pattern" : "\\/\\/.*\\n",
+    "priority" : -1,
+    "discard" : true
+  },
+  "regex": { //Regex is defined with {}
+    "pattern" : "\\{(.+)\\}",
+    "priority" : 0
+  },
+  "token_declaration": {
+    "pattern" : "(\\w+)\\s*=",
+    "priority" : 1
+  },
+  "top_level": {
+    "pattern" : "(\\w+)\\s*->",
+    "priority" : 1
+  },
+  "save_name": {
+    "pattern" : "\\[(\\w+)\\]",
+    "priority" : 1
+  },
+  //Control Flow
+  "(": {
+    "pattern" : "\\(",
+    "priority" : 1
+  },
+  ")": {
+    "pattern" : "\\)",
+    "priority" : 1
+  },
+  "end": {
+    "pattern" : "\\;",
+    "priority" : 1
+  },
+  //Operators
+  "or": {
+    "pattern" : "\\|",
+    "priority" : 2
+  },
+  "question": {
+    "pattern" : "\\?",
+    "priority" : 2
+  },
+  "star": {
+    "pattern" : "\\*",
+    "priority" : 2
+  },
+  "plus": {
+    "pattern" : "\\+",
+    "priority" : 2
+  },
+  //Identifier is lowest priority
+  "identifier": {
+    "pattern" : "(\\w+)",
+    "priority" : 3
+  }
+}
